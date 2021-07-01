@@ -6,6 +6,8 @@
 # API keys + Prod settings
 appsettings.json
 
+ssl
+
 # User-specific files
 *.rsuser
 *.suo
