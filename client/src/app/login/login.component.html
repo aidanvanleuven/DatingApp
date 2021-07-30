@@ -1,0 +1,31 @@
+<div class="container mt-3">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <form *ngIf="(accountService.currentUser$ | async) === null" #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off" id="login-form">
+            <div>
+              <mat-form-field appearance="fill" class="col-md-6 col-sm-12">
+                <mat-label>Username</mat-label>
+                <input name="username" [(ngModel)]="model.username" matInput placeholder="Input your username">
+              </mat-form-field>
+            </div>
+      
+            <div>
+              <mat-form-field appearance="fill" class="col-md-6 col-sm-12">
+                <mat-label>Password</mat-label>
+                <input type="password" name="password" [(ngModel)]="model.password" matInput placeholder="Input your password">
+              </mat-form-field>
+            </div>
+        </form>
+
+    </mat-card-content>
+
+    <mat-card-actions>
+        <button mat-raised-button type="submit" color="primary" form="login-form">Submit</button>
+        <button mat-stroked-button (click)="cancelClick()">Cancel</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

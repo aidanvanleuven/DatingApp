@@ -4,13 +4,14 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AccountService } from '../_services/account.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminGuard implements CanActivate {
 
-  constructor(private accountService: AccountService, private toastr: ToastrService) {}
+  constructor(private accountService: AccountService, private toastr: ToastrService, private snackBar: MatSnackBar) {}
 
   canActivate(): Observable<boolean> {
     return this.accountService.currentUser$.pipe(
@@ -19,6 +20,7 @@ export class AdminGuard implements CanActivate {
           return true;
         }
 
+        // this.snackBar.open("You're not authorized to enter this area.");
         this.toastr.error("You're not authorized to enter this area.");
         return false;
       })
