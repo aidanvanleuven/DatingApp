@@ -1,32 +1,30 @@
 <div class="text-center mt-3">
-    <h2>{{predicate === "liked" ? "Members I like" : "Members who like me"}}</h2>
+  <h1>{{predicate === "liked" ? "Users I like" : "Users who like me"}}</h1>
 </div>
 
 <div class="container mt-3">
-    <div class="row">
-        <div class="btn-group" name="predicate">
-            <button class="btn btn-primary" btnRadio="liked" [(ngModel)]="predicate" (click)="loadLikes()">Members I like</button>
-            <button class="btn btn-primary" btnRadio="likedBy" [(ngModel)]="predicate" (click)="loadLikes()">Members who like me</button>
-        </div>
+  <div class="row justify-content-center">
+
+    <div class="col text-center">
+      <mat-button-toggle-group [(value)]="predicate">
+        <mat-button-toggle (click)="loadLikes()" value="liked">Users I Like</mat-button-toggle>
+        <mat-button-toggle (click)="loadLikes()" value="likedBy">Users That Like Me</mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
-    <div class="row mt-3">
-        <div class="col-2" *ngFor="let member of members">
-            <app-member-card [member]="member"></app-member-card>
-        </div>
-    </div>
+
+  </div>
 </div>
 
-<div class="d-flex justify-content-center" *ngIf="pagination">
-    <pagination 
-    [boundaryLinks]="true" 
-    [totalItems]="pagination.totalItems" 
-    [itemsPerPage]="pagination.itemsPerPage"
-    [(ngModel)]="pagination.currentPage"
-    (pageChanged)="pageChanged($event)"
-    previousText="&lsaquo;" 
-    nextText="&rsaquo;" 
-    firstText="&laquo;"
-    lastText="&raquo;">
-  
-    </pagination>
+<div class="container-fluid">
+  <div class="row justify-content-center mt-3">
+    <div class="col-xxl-2 col-xl-3 col-lg-4 col-md-6 col-sm-8 col-10" *ngFor="let member of members">
+      <app-member-card [member]="member" class="mb-3"></app-member-card>
+    </div>
   </div>
+
+  <div class="d-flex justify-content-center mt-3" *ngIf="pagination">
+    <mat-paginator [length]="pagination.totalItems" [pageSize]="pagination.itemsPerPage" (page)="pageChanged($event)">
+    </mat-paginator>
+  </div>
+
+</div>

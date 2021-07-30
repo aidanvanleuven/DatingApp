@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { faUserLock } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -20,6 +21,8 @@ export class MemberListComponent implements OnInit {
   userParams: UserParams;
   user: User;
   genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: "Females"}]
+  selectedValue: string;
+
 
   constructor(private memberService: MembersService) {
     this.userParams = this.memberService.getUserParams();
@@ -30,11 +33,18 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
+    this.selectedValue = this.userParams.orderBy;
     this.memberService.setUserParams(this.userParams);
     this.memberService.getMembers(this.userParams).subscribe(response => {
       this.members = response.result;
       this.pagination = response.pagination;
     })
+  }
+
+  selectionChanged(event: any) {
+    this.selectedValue = event.value;
+    this.userParams.orderBy = event.value;
+    this.loadMembers();
   }
 
   resetFilters() {
@@ -43,7 +53,7 @@ export class MemberListComponent implements OnInit {
   }
 
   pageChanged(event: any) {
-    this.userParams.pageNumber = event.page;
+    this.userParams.pageNumber = event.pageIndex + 1;
     this.memberService.setUserParams(this.userParams);
     this.loadMembers();
   }

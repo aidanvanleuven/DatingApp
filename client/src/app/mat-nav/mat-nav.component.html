@@ -1,0 +1,42 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="'dialog'" [mode]="'push'" [opened]="false">
+    <mat-toolbar>Dating App</mat-toolbar>
+    <mat-nav-list>
+      <ng-container *ngIf="accountService.currentUser$ | async">
+        <div mat-subheader>Navigation</div>
+        <a mat-list-item routerLink="/members" routerLinkActive="active" (click)="drawer.toggle()">Matches</a>
+        <a mat-list-item routerLink="/lists" routerLinkActive="active" (click)="drawer.toggle()">Lists</a>
+        <a mat-list-item routerLink="/messages" routerLinkActive="active" (click)="drawer.toggle()">Messages</a>
+        <a mat-list-item routerLink="/admin" routerLinkActive="active" *appHasRole='["Admin", "Moderator"]' (click)="drawer.toggle()">Admin</a>
+        <mat-divider></mat-divider>
+        <ng-container *ngIf="(accountService.currentUser$ | async) as user">
+          <div mat-subheader>Account</div>
+          <a mat-list-item routerLink="/member/edit">
+            <img matListAvatar src="{{user.photoUrl || './assets/user.png'}}" alt="{{user.username}}">
+            <p matLine>
+              <span>
+                {{ user.knownAs || user.username | titlecase }}
+              </span>
+            </p>
+          </a>
+          <a mat-list-item routerLink="/member/edit">Edit Profile</a>
+          <a mat-list-item class="dropdown-item" (click)="logout()">Logout</a>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!(accountService.currentUser$ | async)">
+        <div mat-subheader>Account</div>
+        <a mat-list-item routerLink="/register" routerLinkActive="active">Register</a>
+        <a mat-list-item routerLink="/login" routerLinkActive="active">Login</a>
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Dating App</span>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

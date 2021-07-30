@@ -1,49 +1,42 @@
-<div class="card">
-  <div class="card-body" #scrollMe style="overflow: scroll; height: 535px; overflow-x: hidden;"
+<mat-card class="mt-3">
+  <mat-card-content #scrollMe style="overflow: scroll; height: 535px; overflow-x: hidden;"
     [scrollTop]="scrollMe.scrollHeight">
     <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
       No messages yet... say hi by using the message box below
     </div>
 
-    <ul *ngIf="(messageService.messageThread$ | async).length > 0" class="chat">
-      <li *ngFor="let message of (messageService.messageThread$ | async)">
-        <div>
-          <span class="chat-img float-right">
-            <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}"
-              alt="{{message.senderUsername}}">
+    <mat-list role="list" *ngIf="(messageService.messageThread$ | async).length > 0">
+      <mat-list-item role="listitem" *ngFor="let message of (messageService.messageThread$ | async)">
+        <img matListAvatar src="{{message.senderPhotoUrl || './assets/user.png'}}">
+        <h3 matLine> {{message.senderUsername}} </h3>
+        <p matLine>
+          <span>{{message.content}} </span>
+        </p>
+        <span class="float-right">
+          <span class="text-success" *ngIf="message.dateRead && message.senderUsername !== username">
+            (read {{message.dateRead | timeago}})
           </span>
-          <div class="chat-body">
-            <div class="header">
-              <small class="text-muted">
-                <span class="fa fa-clock-o"> {{message.messageSent | timeago}}</span>
-                <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderUsername !== username">
-                  (unread)
-                </span>
-                <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderUsername !== username">
-                  (read {{message.dateRead | timeago}})
-                </span>
-              </small>
-            </div>
-            <p>{{message.content}}</p>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
+          <span class="text-danger" *ngIf="!message.dateRead && message.senderUsername !== username">
+            (unread)
+          </span>
+        </span>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
 
-  <div class="card-footer">
+  </mat-card-content>
+
+  <mat-card-footer class="px-3">
     <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
-      <div class="input-group">
-        <input name="messageContent" required [(ngModel)]="messageContent" type="text" class="form-control input-sm"
-          placeholder="Send a private message">
-        <div class="input-group-append">
-          <button [disabled]="!messageForm.valid || loading" class="btn btn-primary" type="submit">
-            <i *ngIf="loading" class="fa fa-spinner fa-spin"></i> Send
-          </button>
-        </div>
-      </div>
+      <mat-form-field style="width: 100%;" appearance="fill">
+        <mat-label>Message</mat-label>
+        <input matInput placeholder="Send a message" required [(ngModel)]="messageContent" name="messageContent"
+          type="text">
+        <button type="submit" [disabled]="!messageForm.valid || loading" matSuffix mat-icon-button>
+          <mat-icon>send</mat-icon>
+        </button>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      </mat-form-field>
     </form>
-  </div>
-</div>
+  </mat-card-footer>
+</mat-card>

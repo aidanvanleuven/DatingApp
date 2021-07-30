@@ -10,6 +10,8 @@ import { PresenceService } from 'src/app/_services/presence.service';
 import { AccountService } from 'src/app/_services/account.service';
 import { User } from 'src/app/_models/user';
 import { take } from 'rxjs/operators';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-member-detail',
@@ -17,17 +19,16 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
-  @ViewChild('memberTabs', {static: true}) memberTabs: TabsetComponent;
   member: Member;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-  activeTab: TabDirective;
   messages: Message[] = [];
   user: User;
+  active: number;
 
   constructor(public presence: PresenceService, private route: ActivatedRoute, 
     private messageService: MessageService, private accountService: AccountService,
-    private router: Router) { 
+    private router: Router, private memberService: MembersService, private toastr: ToastrService) { 
       this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
       this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     }
@@ -43,14 +44,27 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
 
     this.galleryOptions = [
       {
-        width: '500px',
-        height: '500px',
-        imagePercent: 100,
+        width: '600px',
+        height: '400px',
         thumbnailsColumns: 4,
-        imageAnimation: NgxGalleryAnimation.Slide,
+        imageAnimation: NgxGalleryAnimation.Slide
+      },
+      // max-width 800
+      {
+        breakpoint: 800,
+        width: '100%',
+        height: '600px',
+        imagePercent: 80,
+        thumbnailsPercent: 20,
+        thumbnailsMargin: 20,
+        thumbnailMargin: 20
+      },
+      // max-width 400
+      {
+        breakpoint: 400,
         preview: false
       }
-    ]
+    ];
 
     this.galleryImages = this.getImages();
   }
@@ -74,12 +88,14 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   }
 
   selectTab(tabId: number) {
-    this.memberTabs.tabs[tabId].active = true;
+    this.active = tabId;
+    if (tabId == 3) {
+      this.onTabActivated("Messages");
+    }
   }
 
-  onTabActivated(data: TabDirective) {
-    this.activeTab = data;
-    if (this.activeTab.heading === 'Messages' && this.messages.length === 0) {
+  onTabActivated(label: string) {
+    if (label === 'Messages' && this.messages.length === 0) {
       this.messageService.createHubConnection(this.user, this.member.username);
     } else {
       this.messageService.stopHubConnection();
@@ -88,6 +104,12 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.messageService.stopHubConnection();
+  }
+
+  addLike(member: Member) {
+    this.memberService.addLike(member.username).subscribe(() => {
+      this.toastr.success('You have liked ' + member.knownAs);
+    })
   }
 
 }
