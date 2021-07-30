@@ -11,7 +11,7 @@
         <mat-divider></mat-divider>
         <ng-container *ngIf="(accountService.currentUser$ | async) as user">
           <div mat-subheader>Account</div>
-          <a mat-list-item routerLink="/member/edit">
+          <a mat-list-item routerLink="/member/edit" routerLinkActive="active" (click)="drawer.toggle()">
             <img matListAvatar src="{{user.photoUrl || './assets/user.png'}}" alt="{{user.username}}">
             <p matLine>
               <span>
@@ -19,14 +19,14 @@
               </span>
             </p>
           </a>
-          <a mat-list-item routerLink="/member/edit">Edit Profile</a>
-          <a mat-list-item class="dropdown-item" (click)="logout()">Logout</a>
+          <a mat-list-item routerLink="/member/edit" routerLinkActive="active" (click)="drawer.toggle()">Edit Profile</a>
+          <a mat-list-item class="dropdown-item" (click)="logout()" (click)="drawer.toggle()">Logout</a>
         </ng-container>
       </ng-container>
       <ng-container *ngIf="!(accountService.currentUser$ | async)">
         <div mat-subheader>Account</div>
-        <a mat-list-item routerLink="/register" routerLinkActive="active">Register</a>
-        <a mat-list-item routerLink="/login" routerLinkActive="active">Login</a>
+        <a mat-list-item routerLink="/register" routerLinkActive="active" (click)="drawer.toggle()">Register</a>
+        <a mat-list-item routerLink="/login" routerLinkActive="active" (click)="drawer.toggle()">Login</a>
       </ng-container>
     </mat-nav-list>
   </mat-sidenav>
